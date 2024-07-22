@@ -24,26 +24,27 @@ import {
   ChevronDown,
 } from "lucide-react";
 
+// import { Icons } from "@/components/icons"
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuPortal,
-  DropdownMenuSeparator,
-  DropdownMenuShortcut,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+  navigationMenuTriggerStyle,
+} from "@/components/ui/navigation-menu";
+
+import { useState } from "react";
+import React from "react";
 
 const font = Montserrat({ weight: "600", subsets: ["latin"] });
 
 export const LandingNavbar = () => {
+  const [isOpen, setIsOpen] = useState(false);
+
   return (
-    <nav className="p-4 bg-white flex items-center justify-between">
+    <nav className="p-4 bg-white flex items-center justify-between text-[#666]">
       <Link href="/" className="flex items-center">
         <h1 className={cn("text-2xl font-bold text-black", font.className)}>
           pic
@@ -56,44 +57,24 @@ export const LandingNavbar = () => {
         <span className="px-3 cursor-pointer">
           <Link href="/about">About Us</Link>
         </span>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <span className="px-3 cursor-pointer">
-              <div className="flex flex-row items-center ">
-                <div className="col-9">Services</div>
-                <div className="col-2">
-                  <ChevronDown />
-                </div>
-              </div>
-            </span>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent className="w-85">
-            <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <span className="cursor-pointer">
-                  <Link href="/">Wedding Photography</Link>
-                </span>
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <span className="cursor-pointer">
-                  <Link href="/">Pre-Wedding Photography</Link>
-                </span>
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <span className="cursor-pointer">
-                  <Link href="/">Maternity Photoshoot</Link>
-                </span>
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <span className="cursor-pointer">
-                  <Link href="/">Newborn Baby Photography</Link>
-                </span>
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
-            <DropdownMenuSeparator />
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <NavigationMenu>
+          <NavigationMenuList>
+            <NavigationMenuItem>
+              <NavigationMenuTrigger>Service</NavigationMenuTrigger>
+              <NavigationMenuContent>
+                <ul className="flex flex-col w-[250px] gap-3 p-4 md:w-[250px] md:grid-cols-2 lg:w-[250px] ">
+                  {components.map((component) => (
+                    <ListItem
+                      key={component.title}
+                      title={component.title}
+                      href={component.href}
+                    ></ListItem>
+                  ))}
+                </ul>
+              </NavigationMenuContent>
+            </NavigationMenuItem>
+          </NavigationMenuList>
+        </NavigationMenu>
         <span className="px-3 cursor-pointer">
           <Link href="/gallery">Gallery</Link>
         </span>
@@ -107,3 +88,48 @@ export const LandingNavbar = () => {
     </nav>
   );
 };
+
+const components: { title: string; href: string }[] = [
+  {
+    title: "Wedding Photography",
+    href: "/",
+  },
+  {
+    title: "Pre-Wedding Photography",
+    href: "/",
+  },
+  {
+    title: "Maternity Photoshoot",
+    href: "/",
+  },
+  {
+    title: "Newborn Baby Photography",
+    href: "/",
+  },
+];
+
+const ListItem = React.forwardRef<
+  React.ElementRef<"a">,
+  React.ComponentPropsWithoutRef<"a">
+>(({ className, title, children, ...props }, ref) => {
+  return (
+    <li>
+      <NavigationMenuLink asChild>
+        <a
+          ref={ref}
+          className={cn(
+            "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
+            className
+          )}
+          {...props}
+        >
+          <div className="text-sm font-medium leading-none">{title}</div>
+          <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+            {children}
+          </p>
+        </a>
+      </NavigationMenuLink>
+    </li>
+  );
+});
+ListItem.displayName = "ListItem";
